@@ -1,0 +1,52 @@
+package org.chz.controller;
+
+import io.swagger.annotations.Api;
+import org.chz.result.Result;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@Api(tags = "后台登录管理")
+@RestController
+@RequestMapping("/admin/system/index")
+public class IndexController {
+
+    /**
+     * 后台登录
+     * @return
+     */
+    @PostMapping("login")
+    public Result login(){
+        HashMap<String , Object> map = new HashMap<>();
+        map.put("token","admin");
+        return Result.ok(map);
+    }
+
+    /**
+     * 获取后台登录用户信息
+     * @return
+     */
+    @GetMapping("info")
+    public Result info() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("roles","[admin]");
+        map.put("name","admin");
+        map.put("avatar","https://oss.aliyuncs.com/aliyun_id_photo_bucket/default_handsome.jpg");
+        return Result.ok(map);
+    }
+
+    /**
+     * 后台管理系统退出
+     * @return
+     */
+    @PostMapping("logout")
+    public Result logout(){
+        return Result.ok();
+    }
+}
