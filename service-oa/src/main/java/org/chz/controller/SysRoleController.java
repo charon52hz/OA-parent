@@ -31,11 +31,11 @@ public class SysRoleController {
     @GetMapping("/findAll")
     public Result<List<SysRole>> findAll(){
         List<SysRole> list = sysRoleService.list();
-        try {
-            int i = 10/0;
-        }catch (Exception e){
-            throw new MyException(500,"处理自定义异常");
-        }
+//        try {
+//            int i = 10/0;
+//        }catch (Exception e){
+//            throw new MyException(500,"处理自定义异常");
+//        }
 
         return Result.ok(list);
     }
@@ -51,12 +51,14 @@ public class SysRoleController {
         //调用service方法实现
         //1. 创建page对象，传递分页相关的参数
         Page<SysRole> pageParam = new Page<>(page,limit);
+
         //2. 封装条件，判断条件是否为空，不为空进行封装
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
         String roleName = sysRoleQueryVo.getRoleName();
         if (!StringUtils.isEmpty(roleName)){
             wrapper.like(SysRole::getRoleName,roleName);    //封装条件查询，like:模糊查询
         }
+
         //3. 传入分页需要的参数和查询条件，调用方法实现分页条件查询
         Page<SysRole> result = sysRoleService.page(pageParam, wrapper);
         return Result.ok(result);
