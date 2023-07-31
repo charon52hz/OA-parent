@@ -2,14 +2,13 @@ package org.chz.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.chz.model.system.SysRole;
 import org.chz.model.system.SysUser;
 import org.chz.result.Result;
 import org.chz.service.SysUserService;
+import org.chz.vo.system.AssignRoleVo;
 import org.chz.vo.system.SysUserQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -17,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import java.util.List;
  * @author chz
  * @since 2023-07-12
  */
-// localhost:8800/doc.html
+//localhost:8800/doc.html
 @Api(tags = "用户管理接口")
 @RestController
 @RequestMapping("/admin/system/sysUser")
@@ -47,13 +47,14 @@ public class SysUserController {
 
         //封装条件，判断条件值不为空
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        String username = sysUserQueryVo.getKeyword();
+        String keywords = sysUserQueryVo.getKeyword();
         String createTimeBegin = sysUserQueryVo.getCreateTimeBegin();
         String createTimeEnd = sysUserQueryVo.getCreateTimeEnd();
 
-        if (!StringUtils.isEmpty(username)){
-            wrapper.like(SysUser::getUsername,username);    //模糊查询
+        if (!StringUtils.isEmpty(keywords)){
+            wrapper.like(SysUser::getUsername,keywords).or().like(SysUser::getName,keywords).or().like(SysUser::getPhone,keywords);    //模糊查询
         }
+
         if (!StringUtils.isEmpty(createTimeBegin)){
             wrapper.ge(SysUser::getCreateTime,createTimeBegin); //ge:大于等于
         }
@@ -63,6 +64,27 @@ public class SysUserController {
 
         Page<SysUser> pageModel = service.page(pageParam, wrapper);
         return  Result.ok(pageModel);
+    }
+
+    @ApiOperation("根据用户id更改用户状态")
+    @GetMapping("updateStatus/{id}/{status}")
+    public Result updateStatus(@PathVariable long id,@PathVariable Integer status){
+        service.updateStatus(id,status);
+        return Result.ok();
+    }
+
+    @ApiOperation("为用户获得角色数据")
+    @GetMapping("toAssign/{userId}")
+    public Result toAssign(@PathVariable long userId){
+        Map<String, Object> roleMap =  service.findRoleDataById(userId);
+        return Result.ok(roleMap);
+    }
+
+    @ApiOperation("为用户分配角色")
+    @PostMapping("doAssign")
+    public Result doAssign(@RequestBody AssignRoleVo assignRoleVo){
+        service.doAssign(assignRoleVo);
+        return Result.ok();
     }
 
 

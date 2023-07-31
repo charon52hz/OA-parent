@@ -3,6 +3,9 @@ package org.chz.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.chz.model.system.SysUser;
+import org.chz.vo.system.AssignRoleVo;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -14,4 +17,9 @@ import org.chz.model.system.SysUser;
  */
 public interface SysUserService extends IService<SysUser> {
 
+    Map<String, Object> findRoleDataById(long userId);
+
+    void doAssign(AssignRoleVo assignRoleVo);
+
+    void updateStatus(long id, Integer status);
 }

@@ -1,9 +1,17 @@
 package org.chz;
 
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
 public class Test {
     public static void main(String[] args) {
-        int x = -1;
-        x++;
-        System.out.println(x);
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("aaa");
+        strings.add("bbb");
+        strings.add("ccc");
+        strings.add("ddd");
+
+
+
     }
 }
