@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.chz.model.system.SysUser;
 import org.chz.result.Result;
 import org.chz.service.SysUserService;
+import org.chz.utils.MD5;
 import org.chz.vo.system.AssignRoleVo;
 import org.chz.vo.system.SysUserQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,9 @@ public class SysUserController {
     @ApiOperation(value = "新增角色")
     @PostMapping("save")
     public Result save(@RequestBody @Validated SysUser user) {
+        //对密码进行MD5加密
+        String MD5password = MD5.encrypt(user.getPassword());
+        user.setPassword(MD5password);
         boolean is_success = service.save(user);
         if (is_success)
             return Result.ok();
