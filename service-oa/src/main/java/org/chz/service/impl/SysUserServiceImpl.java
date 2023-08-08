@@ -1,5 +1,6 @@
 package org.chz.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.chz.mapper.SysUserMapper;
 import org.chz.model.system.SysRole;
@@ -36,6 +37,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     
     @Autowired
     private SysRoleService roleService;
+
+    @Override
+    public SysUser getUserByUserName(String username) {
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUser::getName,username);
+        SysUser user = baseMapper.selectOne(wrapper);
+        return user;
+    }
 
     @Override
     public Map<String, Object> findRoleDataById(long userId) {
