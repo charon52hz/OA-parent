@@ -10,6 +10,7 @@ import org.chz.result.Result;
 import org.chz.service.SysRoleService;
 import org.chz.vo.system.SysRoleQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +46,8 @@ public class SysRoleController {
      * page 当前页
      * limit 每页显示的记录数
      */
+
+    @PreAuthorize("hasAuthority('bnt.sysRole.list')")
     @ApiOperation("条件分页查询")
     @GetMapping("{page}/{limit}")
     public Result pageQueryRole(@PathVariable long page, @PathVariable long limit, SysRole sysRoleQueryVo){
@@ -64,6 +67,7 @@ public class SysRoleController {
         return Result.ok(result);
     }
 
+    @PreAuthorize("hasAuthority('bnt.sysRole.list')")
     @ApiOperation(value = "获取")
     @GetMapping("get/{id}")
     public Result get(@PathVariable Long id) {
@@ -71,6 +75,7 @@ public class SysRoleController {
         return Result.ok(role);
     }
 
+    @PreAuthorize("hasAuthority('bnt.sysRole.add')")
     @ApiOperation(value = "新增角色")
     @PostMapping("save")
     public Result save(@RequestBody @Validated SysRole role) {
@@ -81,6 +86,7 @@ public class SysRoleController {
             return Result.fail();
     }
 
+    @PreAuthorize("hasAuthority('bnt.sysRole.update')")
     @ApiOperation(value = "修改角色")
     @PutMapping("update")
     public Result updateById(@RequestBody SysRole role) {
@@ -91,6 +97,7 @@ public class SysRoleController {
             return Result.fail();
     }
 
+    @PreAuthorize("hasAuthority('bnt.sysRole.remove')")
     @ApiOperation(value = "删除角色")
     @DeleteMapping("remove/{id}")
     public Result remove(@PathVariable Long id) {
@@ -101,6 +108,7 @@ public class SysRoleController {
             return Result.fail();
     }
 
+    @PreAuthorize("hasAuthority('bnt.sysRole.remove')")
     @ApiOperation(value = "根据id列表删除")
     @DeleteMapping("batchRemove")
     public Result batchRemove(@RequestBody List<Long> idList) {

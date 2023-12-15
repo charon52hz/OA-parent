@@ -12,6 +12,7 @@ import org.chz.utils.MD5;
 import org.chz.vo.system.AssignRoleVo;
 import org.chz.vo.system.SysUserQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class SysUserController {
 
     //用户条件查询
     @ApiOperation("用户条件分页查询")
+    @PreAuthorize("hasAuthority('bnt.sysUser.list')")
     @GetMapping("{page}/{limit}")
     public Result get(@PathVariable long page,
                       @PathVariable long limit,
@@ -68,6 +70,7 @@ public class SysUserController {
     }
 
     @ApiOperation("根据用户id更改用户状态")
+    @PreAuthorize("hasAuthority('bnt.sysUser.update')")
     @GetMapping("updateStatus/{id}/{status}")
     public Result updateStatus(@PathVariable long id,@PathVariable Integer status){
         service.updateStatus(id,status);
@@ -82,6 +85,7 @@ public class SysUserController {
     }
 
     @ApiOperation("为用户分配角色")
+    @PreAuthorize("hasAuthority('bnt.sysUser.assignRole')")
     @PostMapping("doAssign")
     public Result doAssign(@RequestBody AssignRoleVo assignRoleVo){
         service.doAssign(assignRoleVo);
@@ -90,6 +94,7 @@ public class SysUserController {
 
 
     @ApiOperation(value = "获取")
+    @PreAuthorize("hasAuthority('bnt.sysUser.list')")
     @GetMapping("get/{id}")
     public Result get(@PathVariable Long id) {
         SysUser user = service.getById(id);
@@ -97,6 +102,7 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "新增角色")
+    @PreAuthorize("hasAuthority('bnt.sysUser.add')")
     @PostMapping("save")
     public Result save(@RequestBody @Validated SysUser user) {
         //对密码进行MD5加密
@@ -110,6 +116,7 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "修改角色")
+    @PreAuthorize("hasAuthority('bnt.sysUser.update')")
     @PutMapping("update")
     public Result updateById(@RequestBody SysUser user) {
         boolean is_success = service.updateById(user);
@@ -120,6 +127,7 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "删除角色")
+    @PreAuthorize("hasAuthority('bnt.sysUser.remove')")
     @DeleteMapping("remove/{id}")
     public Result remove(@PathVariable Long id) {
         boolean is_success = service.removeById(id);
@@ -130,6 +138,7 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "根据id列表删除")
+    @PreAuthorize("hasAuthority('bnt.sysUser.remove')")
     @DeleteMapping("batchRemove")
     public Result batchRemove(@RequestBody List<Long> idList) {
         boolean is_success = service.removeByIds(idList);

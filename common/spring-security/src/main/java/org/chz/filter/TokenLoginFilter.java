@@ -1,5 +1,6 @@
 package org.chz.filter;
 
+import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.chz.custom.CustomUser;
 import org.chz.jwt.JwtHelper;
@@ -7,6 +8,7 @@ import org.chz.result.Result;
 import org.chz.result.ResultCodeNum;
 import org.chz.utils.ResponseUtil;
 import org.chz.vo.system.LoginVo;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,12 +26,15 @@ import java.util.Map;
 
 public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
+    private RedisTemplate redisTemplate;
+
     //构造方法
-    public TokenLoginFilter(AuthenticationManager authenticationManager) {
+    public TokenLoginFilter(AuthenticationManager authenticationManager,RedisTemplate redisTemplate) {
         this.setAuthenticationManager(authenticationManager);
         this.setPostOnly(false);
         //指定登录接口及提交方式，可以指定任意路径
         this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index/login","POST"));
+        this.redisTemplate = redisTemplate;
     }
 
     //登录认证
@@ -52,6 +57,8 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUser customUser = (CustomUser) authResult.getPrincipal();
         String token = JwtHelper.createToken(customUser.getSysUser().getId(), customUser.getSysUser().getUsername());
 
+        //把权限数据保存在redis中
+        redisTemplate.opsForValue().set(customUser.getUsername(), JSON.toJSONString(customUser.getAuthorities()));
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         ResponseUtil.out(response, Result.ok(map));
